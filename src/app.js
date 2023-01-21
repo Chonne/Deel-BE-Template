@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const {sequelize} = require('./model');
 const {getProfile} = require('./middleware/getProfile');
 const {getOneForProfile: getContract, getAllNonTerminatedForProfile: getContracts} = require('./usecases/contract');
-const {getAllActiveUnpaid: getUnpaidJobs} = require('./usecases/job');
+const {getAllActiveUnpaid: getUnpaidJobs, getBestProfession} = require('./usecases/job');
 const app = express();
 app.use(bodyParser.json());
 app.set('sequelize', sequelize);
@@ -39,6 +39,20 @@ app.get('/jobs/unpaid', getProfile, async (req, res) => {
     const jobs = await getUnpaidJobs(req.profile.id);
 
     res.json(jobs);
+});
+
+/**
+ * Returns the profession that earned the most money (sum of jobs paid) for any contactor that worked in the query time range
+ * @returns profession
+ */
+app.get('/admin/best-profession', getProfile, async (req, res) => {
+    // todo: validate the parameters: must be date strings (YYYY-MM-DD), valid dates, not empty, start <= end...
+    const start = req.query.start
+    const end = req.query.end
+
+    const profession = await getBestProfession(start, end);
+
+    res.json(profession);
 });
 
 module.exports = app;

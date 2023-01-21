@@ -1,4 +1,4 @@
-const {Op} = require('sequelize');
+const sequelize = require('sequelize');
 const model = require('../model');
 
 module.exports.getAllActiveUnpaid = async (profileId) => {
@@ -7,15 +7,48 @@ module.exports.getAllActiveUnpaid = async (profileId) => {
             {
                 model: model.Contract,
                 where: {
-                    [Op.or]: [{ContractorId: profileId}, {ClientId: profileId}],
+                    [sequelize.Op.or]: [{ContractorId: profileId}, {ClientId: profileId}],
                     status: 'in_progress',
                 },
             },
         ],
         where: {
-            [Op.or]: [{paid: false}, {paid: {[Op.is]: null}}],
+            [sequelize.Op.or]: [{paid: false}, {paid: {[sequelize.Op.is]: null}}],
         },
     };
 
     return model.Job.findAll(options);
+};
+
+module.exports.getBestProfession = async (start, end) => {
+    const options = {
+        attributes: [
+            [sequelize.col('Contract.Contractor.profession'), 'profession'],
+            [sequelize.fn('sum', sequelize.col('price')), 'sumPrice'],
+        ],
+        include: [
+            {
+                model: model.Contract,
+                attributes: [],
+                include: [
+                    {
+                        attributes: ['profession'],
+                        model: model.Profile,
+                        as: 'Contractor',
+                    },
+                ],
+            },
+        ],
+        where: {
+            paid: true,
+            paymentDate: {
+                [sequelize.Op.gte]: start,
+                [sequelize.Op.lte]: end,
+            },
+        },
+        group: ['Contract.ContractorId'],
+        order: [['sumPrice', 'DESC']],
+    };
+
+    return model.Job.findOne(options);
 };
