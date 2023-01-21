@@ -22,5 +22,5 @@ module.exports.getAllNonTerminatedForProfile = async (profileId) => {
         },
     };
 
-    return model.Contract.findOne(options);
+    return model.Contract.findAll(options);
 };

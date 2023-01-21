@@ -25,10 +25,9 @@ app.get('/contracts/:id', getProfile, async (req, res) => {
  * @returns contracts
  */
 app.get('/contracts', getProfile, async (req, res) => {
-    const contract = await getContracts(req.profile.id);
-    if (!contract) return res.status(404).end();
+    const contracts = await getContracts(req.profile.id);
 
-    res.json(contract);
+    res.json(contracts);
 });
 
 module.exports = app;
