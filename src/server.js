@@ -9,6 +9,6 @@ async function init() {
     });
   } catch (error) {
     console.error(`An error occurred: ${JSON.stringify(error)}`);
-    process.exit(1);
+    throw error;
   }
 }
