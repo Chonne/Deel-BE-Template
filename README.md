@@ -27,7 +27,7 @@ contractor get paid for jobs by clients under a certain contract.
 ## Getting Set Up
 
   
-The exercise requires [Node.js](https://nodejs.org/en/) to be installed. We recommend using the LTS version.
+The exercise requires [Node.js](https://nodejs.org/en/) to be installed. We recommend using version 10 or 12.
 
   
 

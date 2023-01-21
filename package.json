@@ -17,7 +17,7 @@
     "nodemon": "1.19.1"
   },
   "engines": {
-    "node": ">=10.16.3"
+    "node": ">=10.16.3 <13"
   },
   "engineStrict": true
 }
