@@ -9,11 +9,16 @@
     "sqlite3": "^4.0.1"
   },
   "scripts": {
+    "lint": "eslint ./src",
     "start": "nodemon ./src/server.js",
     "seed": "node ./scripts/seedDb.js"
   },
   "devDependencies": {
+    "@babel/core": "^7.20.12",
+    "@babel/eslint-parser": "^7.19.1",
     "concurrently": "4.1.0",
+    "eslint": "^8.32.0",
+    "eslint-plugin-node": "^11.1.0",
     "nodemon": "1.19.1"
   },
   "engines": {
