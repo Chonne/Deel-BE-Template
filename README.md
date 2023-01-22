@@ -2,9 +2,9 @@
 
 ## Personal Notes
 
-Time spent up until commit [a7b5ffe1cbfa51f5ab0f110f5d5e63358ccb6336](https://github.com/Chonne/Deel-BE-Template/tree/a7b5ffe1cbfa51f5ab0f110f5d5e63358ccb6336): 3h30.
+Time spent up until commit [a7b5ffe1cbfa51f5ab0f110f5d5e63358ccb6336](https://github.com/Chonne/Deel-BE-Template/tree/a7b5ffe1cbfa51f5ab0f110f5d5e63358ccb6336): 3h30. After that, I spent about 1h30 to refactor and fix a bit and finish 2 routes.
 
-What I've done:
+What I've done in 3h30:
 
 - code style: installed eslint based on what I could find in a few public deel repos. Had to adapt the packages installed so it would work, but the rules should remain the same
 - provided a postman collection, in [./docs]()
@@ -15,11 +15,12 @@ What I've done:
   - ***POST*** `/jobs/:job_id/pay`: I've assumed that the user posting this request must be the job's client
   - ***GET*** `/admin/best-profession?start=<date>&end=<date>`
 
-What still needs to be done:
+What I've done during about 1h30 after that:
 
-- ***POST*** `/balances/deposit/:userId`
-- ***GET*** `/admin/best-clients?start=<date>&end=<date>&limit=<integer>`
-- tests with mocha (according to what's used in your public repos)
+- "fixed" route: ***POST*** `/jobs/:job_id/pay`: I've assumed that the user posting this request must be the job's client
+- implemented routes:
+  - ***POST*** `/balances/deposit/:userId`
+  - ***GET*** `/admin/best-clients?start=<date>&end=<date>&limit=<integer>`
 
 What I would've done had I had more time:
 
@@ -28,6 +29,7 @@ What I would've done had I had more time:
 - /contracts/:id could return a 403 if the contract exists but isn't linked to the profile. I feel it depends on the context and if we want to expose if a contract id does exist to everyone or not
 - add jsdoc in the new methods to better describe params and returned values
 - in `/jobs/:jobId/pay`, check the result inside the transaction to be able to throw an error if some results require so
+- tests with mocha (according to what's used in your public repos)
 
 Personal comments about the test:
 
