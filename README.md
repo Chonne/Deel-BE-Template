@@ -1,5 +1,40 @@
 # DEEL BACKEND TASK
 
+## Personal Notes
+
+Time spent up until commit [a7b5ffe1cbfa51f5ab0f110f5d5e63358ccb6336](https://github.com/Chonne/Deel-BE-Template/tree/a7b5ffe1cbfa51f5ab0f110f5d5e63358ccb6336): 3h30.
+
+What I've done:
+
+- code style: installed eslint based on what I could find in a few public deel repos. Had to adapt the packages installed so it would work, but the rules should remain the same
+- provided a postman collection, in [./docs]()
+- implemented routes:
+  - ***GET*** `/contracts/:id`
+  - ***GET*** `/contracts`
+  - ***GET*** `/jobs/unpaid`
+  - ***POST*** `/jobs/:job_id/pay`
+  - ***GET*** `/admin/best-profession?start=<date>&end=<date>`
+
+What still needs to be done:
+
+- ***POST*** `/balances/deposit/:userId`
+- ***GET*** `/admin/best-clients?start=<date>&end=<date>&limit=<integer>`
+- tests with mocha (according to what's used in your public repos)
+
+What I would've done had I had more time:
+
+- validate query params, mainly for /admin/*, using some express middleware
+- install and use something like [cls-hooked](https://github.com/Jeff-Lewis/cls-hooked) to automatically pass transactions to queries: this would avoid forgetting to pass transactions when adding new queries (during future developments)
+- /contracts/:id could return a 403 if the contract exists but isn't linked to the profile. I feel it depends on the context and if we want to expose if a contract id does exist to everyone or not
+- add jsdoc in the new methods to better describe params and returned values
+
+Personal comments about the test:
+
+- I had to use nodejs v12 as more recent versions failed during the sqlite install/build. I don't know if it's specific to my computer, I haven't taken the time to investigate further
+- the readme contains a few typos. Apart from those, the assignment is very clear and to the point
+- in "Getting Set Up", it's mentioned there's a React client. This isn't the case. I suppose the `concurrently` package could therefore be removed
+
+---
   
 
 💫 Welcome! 🎉
