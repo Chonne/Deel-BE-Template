@@ -29,6 +29,7 @@ What I would've done had I had more time:
 - /contracts/:id could return a 403 if the contract exists but isn't linked to the profile. I feel it depends on the context and if we want to expose if a contract id does exist to everyone or not
 - add jsdoc in the new methods to better describe params and returned values
 - in `/jobs/:jobId/pay`, check the result inside the transaction to be able to throw an error if some results require so
+- the admin routes may not be using sequelize in an optimal way, I'm not sure using the Job models is the most logical entrypoint or that using attributes is the best way, I'd have to investigate further what the best practices are
 - tests with mocha (according to what's used in your public repos)
 
 Personal comments about the test:
