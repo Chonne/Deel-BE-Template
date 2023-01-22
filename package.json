@@ -10,7 +10,7 @@
   },
   "scripts": {
     "lint": "eslint ./src",
-    "start": "nodemon ./src/server.js",
+    "start": "PORT=3001 nodemon ./src/server.js",
     "seed": "node ./scripts/seedDb.js"
   },
   "devDependencies": {
