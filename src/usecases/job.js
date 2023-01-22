@@ -79,6 +79,55 @@ module.exports.getBestProfession = async (start, end) => {
     return model.Job.findOne(options);
 };
 
+module.exports.getBestPayingClients = async (start, end, limit = 2) => {
+    const options = {
+        attributes: [
+            [Sequelize.col('Contract.Client.id'), 'id'],
+            [Sequelize.col('Contract.Client.firstName'), 'firstName'],
+            [Sequelize.col('Contract.Client.lastName'), 'lastName'],
+            [Sequelize.fn('sum', Sequelize.col('price')), 'paid'],
+        ],
+        include: [
+            {
+                model: model.Contract,
+                attributes: [],
+                include: [
+                    {
+                        attributes: ['id', 'fullName'],
+                        model: model.Profile,
+                        as: 'Client',
+                    },
+                ],
+            },
+        ],
+        where: {
+            paid: true,
+            paymentDate: {
+                [Sequelize.Op.gte]: start,
+                [Sequelize.Op.lte]: end,
+            },
+        },
+        group: ['Contract.ClientId'],
+        order: [['paid', 'DESC']],
+        limit,
+    };
+
+    const results = (await model.Job.findAll(options));
+    const bestPayingClients = []
+
+    // todo: find a proper way to concat first and last names, with a virtual field or
+    //       an sqlite compatible concat function
+    results.forEach(result => {
+        bestPayingClients.push({
+            id: result.get('id'),
+            fullName: `${result.get('firstName')} ${result.get('lastName')}`,
+            paid: result.get('paid'),
+        })
+    })
+
+    return bestPayingClients;
+};
+
 module.exports.getOneWithContract = async (id, clientId = null, transaction = null) => {
     const contractOptions = {};
 

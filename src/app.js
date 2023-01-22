@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const {sequelize} = require('./model');
 const {getProfile} = require('./middleware/getProfile');
 const {getOneForProfile: getContract, getAllNonTerminatedForProfile: getContracts} = require('./usecases/contract');
-const {getAllActiveUnpaid: getUnpaidJobs, getBestProfession, payForJob} = require('./usecases/job');
+const {getAllActiveUnpaid: getUnpaidJobs, getBestProfession, getBestPayingClients, payForJob} = require('./usecases/job');
 const {depositInBalance} = require('./usecases/profile');
 const app = express();
 app.use(bodyParser.json());
@@ -117,6 +117,22 @@ app.get('/admin/best-profession', getProfile, async (req, res) => {
     const profession = await getBestProfession(start, end);
 
     res.json(profession);
+});
+
+/**
+ * returns the clients that paid the most for jobs in the query time period.
+ * limit query parameter should be applied, default limit is 2
+ * @returns clients
+ */
+app.get('/admin/best-clients', getProfile, async (req, res) => {
+    // todo: validate the parameters: must be date strings (YYYY-MM-DD), valid dates, not empty, start <= end, limit a positive int...
+    let {start, end, limit} = req.query;
+
+    limit = limit ? parseInt(limit) : undefined
+
+    const clients = await getBestPayingClients(start, end, limit);
+
+    res.json(clients);
 });
 
 module.exports = app;
