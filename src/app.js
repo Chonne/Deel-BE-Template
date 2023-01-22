@@ -47,8 +47,7 @@ app.get('/jobs/unpaid', getProfile, async (req, res) => {
  */
 app.get('/admin/best-profession', getProfile, async (req, res) => {
     // todo: validate the parameters: must be date strings (YYYY-MM-DD), valid dates, not empty, start <= end...
-    const start = req.query.start
-    const end = req.query.end
+    const {start, end} = req.query;
 
     const profession = await getBestProfession(start, end);
 
