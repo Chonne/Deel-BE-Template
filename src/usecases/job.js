@@ -1,4 +1,4 @@
-const sequelize = require('sequelize');
+const Sequelize = require('sequelize');
 const model = require('../model');
 const {getOne: getContractorOrClient, updateClientBalance, updateContractorBalance} = require('./profile');
 
@@ -8,13 +8,13 @@ module.exports.getAllActiveUnpaid = async (profileId) => {
             {
                 model: model.Contract,
                 where: {
-                    [sequelize.Op.or]: [{ContractorId: profileId}, {ClientId: profileId}],
+                    [Sequelize.Op.or]: [{ContractorId: profileId}, {ClientId: profileId}],
                     status: 'in_progress',
                 },
             },
         ],
         where: {
-            [sequelize.Op.or]: [{paid: false}, {paid: {[sequelize.Op.is]: null}}],
+            [Sequelize.Op.or]: [{paid: false}, {paid: {[Sequelize.Op.is]: null}}],
         },
     };
 
@@ -23,7 +23,7 @@ module.exports.getAllActiveUnpaid = async (profileId) => {
 
 module.exports.getSumActiveUnpaidAsClient = async (clientId, transaction = null) => {
     const options = {
-        attributes: [[sequelize.fn('sum', sequelize.col('price')), 'sumPrice']],
+        attributes: [[Sequelize.fn('sum', Sequelize.col('price')), 'sumPrice']],
         include: [
             {
                 model: model.Contract,
@@ -35,7 +35,7 @@ module.exports.getSumActiveUnpaidAsClient = async (clientId, transaction = null)
             },
         ],
         where: {
-            [sequelize.Op.or]: [{paid: false}, {paid: {[sequelize.Op.is]: null}}],
+            [Sequelize.Op.or]: [{paid: false}, {paid: {[Sequelize.Op.is]: null}}],
         },
         group: ['Contract.ClientId'],
     };
@@ -49,8 +49,8 @@ module.exports.getSumActiveUnpaidAsClient = async (clientId, transaction = null)
 module.exports.getBestProfession = async (start, end) => {
     const options = {
         attributes: [
-            [sequelize.col('Contract.Contractor.profession'), 'profession'],
-            [sequelize.fn('sum', sequelize.col('price')), 'sumPrice'],
+            [Sequelize.col('Contract.Contractor.profession'), 'profession'],
+            [Sequelize.fn('sum', Sequelize.col('price')), 'sumPrice'],
         ],
         include: [
             {
@@ -68,8 +68,8 @@ module.exports.getBestProfession = async (start, end) => {
         where: {
             paid: true,
             paymentDate: {
-                [sequelize.Op.gte]: start,
-                [sequelize.Op.lte]: end,
+                [Sequelize.Op.gte]: start,
+                [Sequelize.Op.lte]: end,
             },
         },
         group: ['Contract.ContractorId'],
