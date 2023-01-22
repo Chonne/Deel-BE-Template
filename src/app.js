@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const {sequelize} = require('./model');
 const {getProfile} = require('./middleware/getProfile');
 const {getOneForProfile: getContract, getAllNonTerminatedForProfile: getContracts} = require('./usecases/contract');
-const {getAllActiveUnpaid: getUnpaidJobs, getBestProfession} = require('./usecases/job');
+const {getAllActiveUnpaid: getUnpaidJobs, getBestProfession, payForJob} = require('./usecases/job');
 const app = express();
 app.use(bodyParser.json());
 app.set('sequelize', sequelize);
@@ -39,6 +39,32 @@ app.get('/jobs/unpaid', getProfile, async (req, res) => {
     const jobs = await getUnpaidJobs(req.profile.id);
 
     res.json(jobs);
+});
+
+/**
+ * Pay for a job, a client can only pay if his balance >= the amount to pay. The amount should be moved from the client's balance to the contractor balance
+ * @returns job
+ */
+app.post('/jobs/:jobId/pay', getProfile, async (req, res) => {
+    try {
+        const {jobId} = req.params;
+        let result;
+
+        await sequelize.transaction(async (t) => {
+            result = await payForJob(jobId, t);
+        });
+
+        let statusCode = 200;
+
+        if (result.status === 'BALANCE_TOO_LOW') {
+            // not sure this is the best response code to send back, should perhaps be considered as a user error
+            statusCode = 400;
+        }
+
+        res.status(statusCode).send(result.msg);
+    } catch (error) {
+        res.status(500).send(`Payment failed: ${error}`);
+    }
 });
 
 /**
