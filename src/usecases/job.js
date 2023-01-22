@@ -80,19 +80,19 @@ module.exports.getBestProfession = async (start, end) => {
 };
 
 module.exports.getOneWithContract = async (id, clientId = null, transaction = null) => {
-    const contractOptions = {}
+    const contractOptions = {};
 
     if (clientId) {
         contractOptions.where = {
             ClientId: clientId,
-        }
+        };
     }
 
     const options = {
         include: [
             {
                 model: model.Contract,
-                ...contractOptions
+                ...contractOptions,
             },
         ],
         where: {
