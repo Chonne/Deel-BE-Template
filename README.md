@@ -12,7 +12,7 @@ What I've done:
   - ***GET*** `/contracts/:id`
   - ***GET*** `/contracts`
   - ***GET*** `/jobs/unpaid`
-  - ***POST*** `/jobs/:job_id/pay`
+  - ***POST*** `/jobs/:job_id/pay`: I've assumed that the user posting this request must be the job's client
   - ***GET*** `/admin/best-profession?start=<date>&end=<date>`
 
 What still needs to be done:
@@ -27,6 +27,7 @@ What I would've done had I had more time:
 - install and use something like [cls-hooked](https://github.com/Jeff-Lewis/cls-hooked) to automatically pass transactions to queries: this would avoid forgetting to pass transactions when adding new queries (during future developments)
 - /contracts/:id could return a 403 if the contract exists but isn't linked to the profile. I feel it depends on the context and if we want to expose if a contract id does exist to everyone or not
 - add jsdoc in the new methods to better describe params and returned values
+- in `/jobs/:jobId/pay`, check the result inside the transaction to be able to throw an error if some results require so
 
 Personal comments about the test:
 
