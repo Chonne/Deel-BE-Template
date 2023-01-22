@@ -4,6 +4,7 @@ const {sequelize} = require('./model');
 const {getProfile} = require('./middleware/getProfile');
 const {getOneForProfile: getContract, getAllNonTerminatedForProfile: getContracts} = require('./usecases/contract');
 const {getAllActiveUnpaid: getUnpaidJobs, getBestProfession, payForJob} = require('./usecases/job');
+const {depositInBalance} = require('./usecases/profile');
 const app = express();
 app.use(bodyParser.json());
 app.set('sequelize', sequelize);
@@ -70,6 +71,37 @@ app.post('/jobs/:jobId/pay', getProfile, async (req, res) => {
 
         res.status(statusCode).send(result.msg);
     } catch (error) {
+        res.status(500).send(`Payment failed: ${error}`);
+    }
+});
+
+/**
+ * Deposits money into the balance of a client, a client can't deposit more than 25%
+ * his total of jobs to pay. (at the deposit moment)
+ * Expected body: {amount: <number>}
+ * @returns job
+ */
+app.post('/balances/deposit/:userId', getProfile, async (req, res) => {
+    try {
+        const {userId} = req.params;
+        // todo: validate amount is a positive number and parse it as float
+        const {amount} = req.body;
+        let result = {msg: 'ok'};
+        let statusCode = 200;
+
+        await sequelize.transaction(async (t) => {
+            result = await depositInBalance(userId, amount, t);
+
+            switch (result.status) {
+                case 'DEPOSIT_TOO_BIG':
+                    statusCode = 400;
+                    break;
+            }
+        });
+
+        res.status(statusCode).send(result.msg);
+    } catch (error) {
+        console.error(error);
         res.status(500).send(`Payment failed: ${error}`);
     }
 });

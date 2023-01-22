@@ -21,6 +21,31 @@ module.exports.getAllActiveUnpaid = async (profileId) => {
     return model.Job.findAll(options);
 };
 
+module.exports.getSumActiveUnpaidAsClient = async (clientId, transaction = null) => {
+    const options = {
+        attributes: [[sequelize.fn('sum', sequelize.col('price')), 'sumPrice']],
+        include: [
+            {
+                model: model.Contract,
+                attributes: [],
+                where: {
+                    ClientId: clientId,
+                    status: 'in_progress',
+                },
+            },
+        ],
+        where: {
+            [sequelize.Op.or]: [{paid: false}, {paid: {[sequelize.Op.is]: null}}],
+        },
+        group: ['Contract.ClientId'],
+    };
+
+    const result = await model.Job.findOne(options, {transaction});
+    const sumPrice = result ? result.get('sumPrice') : 0;
+
+    return sumPrice;
+};
+
 module.exports.getBestProfession = async (start, end) => {
     const options = {
         attributes: [
