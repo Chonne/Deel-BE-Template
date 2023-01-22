@@ -42,7 +42,9 @@ app.get('/jobs/unpaid', getProfile, async (req, res) => {
 });
 
 /**
- * Pay for a job, a client can only pay if his balance >= the amount to pay. The amount should be moved from the client's balance to the contractor balance
+ * Pay for a job, a client can only pay if his balance >= the amount to pay.
+ * The amount should be moved from the client's balance to the contractor balance.
+ * The job can only be paid by the client
  * @returns job
  */
 app.post('/jobs/:jobId/pay', getProfile, async (req, res) => {
@@ -51,14 +53,19 @@ app.post('/jobs/:jobId/pay', getProfile, async (req, res) => {
         let result;
 
         await sequelize.transaction(async (t) => {
-            result = await payForJob(jobId, t);
+            result = await payForJob(jobId, req.profile.id, t);
         });
 
         let statusCode = 200;
 
-        if (result.status === 'BALANCE_TOO_LOW') {
-            // not sure this is the best response code to send back, should perhaps be considered as a user error
-            statusCode = 400;
+        switch (result.status) {
+            case 'BALANCE_TOO_LOW':
+                // not sure this is the best response code to send back, should perhaps be considered as a user error
+                statusCode = 400;
+                break;
+            case 'JOB_NOT_FOUND':
+                statusCode = 404;
+                break;
         }
 
         res.status(statusCode).send(result.msg);

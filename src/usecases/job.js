@@ -54,11 +54,20 @@ module.exports.getBestProfession = async (start, end) => {
     return model.Job.findOne(options);
 };
 
-module.exports.getOneWithContract = async (id, transaction) => {
+module.exports.getOneWithContract = async (id, clientId = null, transaction = null) => {
+    const contractOptions = {}
+
+    if (clientId) {
+        contractOptions.where = {
+            ClientId: clientId,
+        }
+    }
+
     const options = {
         include: [
             {
                 model: model.Contract,
+                ...contractOptions
             },
         ],
         where: {
@@ -80,8 +89,14 @@ module.exports.setJobPaid = async (job, transaction) => {
     return job;
 };
 
-module.exports.payForJob = async (jobId, transaction) => {
-    const job = await this.getOneWithContract(jobId);
+module.exports.payForJob = async (jobId, clientId, transaction) => {
+    const job = await this.getOneWithContract(jobId, clientId, transaction);
+
+    if (!job) {
+        return {status: 'JOB_NOT_FOUND', msg: 'Job not found'};
+    }
+
+    const client = await getContractorOrClient(job.Contract.ClientId, transaction);
 
     if (job.paid) {
         // not sure this is the best response code to send back, should perhaps be considered as a user error
@@ -89,7 +104,6 @@ module.exports.payForJob = async (jobId, transaction) => {
     }
 
     const contractor = await getContractorOrClient(job.Contract.ContractorId, transaction);
-    const client = await getContractorOrClient(job.Contract.ClientId, transaction);
 
     if (job.price > client.balance) {
         return {status: 'BALANCE_TOO_LOW', msg: `Balance too low: ${client.balance}. Job costs ${job.price}`};
