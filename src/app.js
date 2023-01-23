@@ -128,7 +128,7 @@ app.get('/admin/best-clients', getProfile, async (req, res) => {
     // todo: validate the parameters: must be date strings (YYYY-MM-DD), valid dates, not empty, start <= end, limit a positive int...
     let {start, end, limit} = req.query;
 
-    limit = limit ? parseInt(limit) : undefined
+    limit = limit ? parseInt(limit) : undefined;
 
     const clients = await getBestPayingClients(start, end, limit);
 

@@ -48,9 +48,9 @@ module.exports.getOne = async (id, transaction = null) => {
 
 /**
  * Deposits amount in a user's balance if it's at most 25% of what they owe as clients
- * @param {number|string} userId 
- * @param {number} amount 
- * @param {object} transaction 
+ * @param {number|string} userId
+ * @param {number} amount
+ * @param {object} transaction
  * @returns Sequelize transaction
  */
 module.exports.depositInBalance = async (userId, amount, transaction) => {

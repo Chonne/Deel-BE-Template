@@ -112,18 +112,18 @@ module.exports.getBestPayingClients = async (start, end, limit = 2) => {
         limit,
     };
 
-    const results = (await model.Job.findAll(options));
-    const bestPayingClients = []
+    const results = await model.Job.findAll(options);
+    const bestPayingClients = [];
 
     // todo: find a proper way to concat first and last names, with a virtual field or
     //       an sqlite compatible concat function
-    results.forEach(result => {
+    results.forEach((result) => {
         bestPayingClients.push({
             id: result.get('id'),
             fullName: `${result.get('firstName')} ${result.get('lastName')}`,
             paid: result.get('paid'),
-        })
-    })
+        });
+    });
 
     return bestPayingClients;
 };
